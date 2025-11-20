@@ -1,0 +1,1 @@
+# Base Strategy class placeholder
