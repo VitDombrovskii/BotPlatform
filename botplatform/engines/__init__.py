@@ -1,0 +1,1 @@
+"""Движки платформы: market, signals, strategy, execution."""
