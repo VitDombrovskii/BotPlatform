@@ -1,0 +1,7 @@
+{
+    "bingx": {
+        "rest_url": "https://open-api.bingx.com",
+        "ws_market_url": "wss://open-api-swap.bingx.com/stream",
+        "symbols": ["BTC-USDT"]
+    }
+}

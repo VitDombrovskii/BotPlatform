@@ -1,0 +1,7 @@
+{
+    "bingx": {
+        "rest_url": "https://mock.rest",
+        "ws_market_url": "wss://mock.ws",
+        "symbols": ["BTC-USDT"]
+    }
+}
