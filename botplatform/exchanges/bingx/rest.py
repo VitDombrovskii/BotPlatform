@@ -1,0 +1,2 @@
+class BingXRest:
+    pass
