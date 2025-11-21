@@ -8,12 +8,6 @@ from botplatform.strategies.base import BaseStrategy
 
 
 class StrategyEngine:
-    """
-    Движок стратегий.
-
-    Управляет жизненным циклом стратегий, передаёт им контекст и собирает ActionIntent.
-    """
-
     def __init__(self) -> None:
         self._strategies: Dict[str, BaseStrategy] = {}
 

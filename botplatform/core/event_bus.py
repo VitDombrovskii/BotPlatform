@@ -1,55 +1,41 @@
-# botplatform/core/event_bus.py
-
 from __future__ import annotations
-import asyncio
-import time
-from typing import Callable, Dict, List, Awaitable, Any, DefaultDict
-from collections import defaultdict
 
-from pydantic import BaseModel
+import asyncio
+from collections import defaultdict
+from typing import Awaitable, Callable, DefaultDict, List
+
 from botplatform.core.events import Event
 
 
 class EventBus:
-    """
-    Простая асинхронная шина событий.
-
-    Возможности:
-    - publish(event): публикует событие в очередь
-    - subscribe(event_type, callback): подписка на события выбранного типа
-    - start(): запускает обработку событий
-    - stop(): останавливает цикл
-    """
+    """Простая асинхронная шина событий."""
 
     def __init__(self) -> None:
         self._queue: asyncio.Queue[Event] = asyncio.Queue()
         self._subscribers: DefaultDict[str, List[Callable[[Event], Awaitable[None]]]] = defaultdict(list)
-        self._running = False
+        self._running: bool = False
         self._task: asyncio.Task | None = None
 
     async def publish(self, event: Event) -> None:
-        """Добавить событие в очередь для обработки."""
         await self._queue.put(event)
 
     def subscribe(self, event_type: str, callback: Callable[[Event], Awaitable[None]]) -> None:
-        """Подписать callback на события определенного типа."""
         self._subscribers[event_type].append(callback)
 
-    async def _run(self) -> None:
+    async def _loop(self) -> None:
         self._running = True
         while self._running:
             event = await self._queue.get()
-            callbacks = self._subscribers.get(event.type, [])
+            callbacks = list(self._subscribers.get(event.type, []))
             for cb in callbacks:
                 try:
                     await cb(event)
-                except Exception as e:
-                    # TODO: логирование ошибок
-                    print(f"[EventBus] Error in subscriber: {e}")
+                except Exception as exc:  # noqa: BLE001
+                    print(f"[EventBus] Error in subscriber {cb}: {exc!r}")
 
     async def start(self) -> None:
-        if not self._task:
-            self._task = asyncio.create_task(self._run())
+        if self._task is None or self._task.done():
+            self._task = asyncio.create_task(self._loop())
 
     async def stop(self) -> None:
         self._running = False

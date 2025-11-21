@@ -4,21 +4,12 @@ from pydantic import BaseModel, Field
 from typing import Optional, Literal, List, Dict
 
 
-# -----------------------------
-# Market Models
-# -----------------------------
-
-
 class OrderBookLevel(BaseModel):
-    """Уровень стакана цен."""
-
     price: float
     size: float
 
 
 class Trade(BaseModel):
-    """Сделка по рынку."""
-
     price: float
     size: float
     side: Literal["BUY", "SELL"]
@@ -26,12 +17,6 @@ class Trade(BaseModel):
 
 
 class MarketSnapshot(BaseModel):
-    """
-    Снимок состояния рынка в один момент времени.
-
-    Используется MarketEngine, SignalsEngine и StrategyEngine.
-    """
-
     symbol: str
     price: float
     bid: float
@@ -42,35 +27,13 @@ class MarketSnapshot(BaseModel):
     timestamp: int  # unix ms
 
 
-# -----------------------------
-# Signals
-# -----------------------------
-
-
 class SignalSnapshot(BaseModel):
-    """
-    Снимок рассчитанных сигналов.
-
-    values/data: произвольный набор индикаторов и метрик.
-    """
-
     symbol: str
     data: Dict[str, float] = Field(default_factory=dict)
     timestamp: int  # unix ms
 
 
-# -----------------------------
-# Position Model
-# -----------------------------
-
-
 class PositionSnapshot(BaseModel):
-    """
-    Унифицированная модель позиции на бирже.
-
-    Используется Legs, StrategyEngine и ExecutionEngine.
-    """
-
     symbol: str
     side: Optional[Literal["LONG", "SHORT"]] = None
     size: float = 0.0
@@ -80,19 +43,8 @@ class PositionSnapshot(BaseModel):
     leverage: Optional[float] = None
 
 
-# -----------------------------
-# Intents
-# -----------------------------
-
-
 class ActionIntent(BaseModel):
-    """
-    Высокоуровневое намерение Leg / стратегии.
-
-    Описывает "что сделать", но не обязано содержать все биржевые детали.
-    """
-
-    action: str  # open / close / scale_in / scale_out / bubble_entry / bubble_exit / ...
+    action: str
     side: Optional[Literal["LONG", "SHORT"]] = None
     size: Optional[float] = None
     price: Optional[float] = None
@@ -100,34 +52,17 @@ class ActionIntent(BaseModel):
 
 
 class OrderIntent(BaseModel):
-    """
-    Ордерное намерение, которое получит ExecutionEngine.
-
-    Почти готовый ордер, но ещё не адаптированный под конкретную биржу.
-    """
-
     symbol: str
     side: Literal["BUY", "SELL"]
     type: Literal["MARKET", "LIMIT"]
     size: float
     price: Optional[float] = None
     client_id: str
-    source: str  # имя стратегии / Leg
+    source: str
     context: Optional[Dict] = None
 
 
-# -----------------------------
-# Order Updates
-# -----------------------------
-
-
 class OrderUpdate(BaseModel):
-    """
-    Обновление состояния ордера от биржи.
-
-    Используется ExecutionEngine, StrategyEngine и Legs.
-    """
-
     order_id: str
     client_id: str
     symbol: str
@@ -136,4 +71,4 @@ class OrderUpdate(BaseModel):
     remaining_size: float
     avg_fill_price: Optional[float] = None
     timestamp: int  # unix ms
-    raw: Dict  # сырые данные от биржи
+    raw: Dict

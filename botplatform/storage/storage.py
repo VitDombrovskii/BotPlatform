@@ -5,16 +5,6 @@ from typing import Any, Dict
 
 
 class BaseStorage(ABC):
-    """
-    Абстракция над хранилищем данных платформы.
-
-    Конкретные реализации могут использовать:
-    - файлы
-    - Redis
-    - PostgreSQL
-    - любую другую систему хранения.
-    """
-
     @abstractmethod
     def save_state(self, key: str, state: Dict[str, Any]) -> None:
         raise NotImplementedError
@@ -25,10 +15,6 @@ class BaseStorage(ABC):
 
 
 class InMemoryStorage(BaseStorage):
-    """
-    Простая in-memory реализация для отладки и тестов.
-    """
-
     def __init__(self) -> None:
         self._data: Dict[str, Dict[str, Any]] = {}
 

@@ -6,12 +6,6 @@ from botplatform.core.models import MarketSnapshot, PositionSnapshot, OrderInten
 
 
 class Exchange(Protocol):
-    """
-    Унифицированный интерфейс биржевого адаптера.
-
-    Реализации (Binance, BingX, OKX и т.д.) должны соответствовать этому протоколу.
-    """
-
     async def get_market_snapshot(self, symbol: str) -> MarketSnapshot:
         ...
 
@@ -22,17 +16,4 @@ class Exchange(Protocol):
         ...
 
     async def cancel_order(self, order_id: str, symbol: str) -> OrderUpdate:
-        ...
-
-    async def stream_market_data(
-        self,
-        symbols: List[str],
-        callback: Callable[[MarketSnapshot], Awaitable[None]],
-    ) -> None:
-        ...
-
-    async def stream_order_updates(
-        self,
-        callback: Callable[[OrderUpdate], Awaitable[None]],
-    ) -> None:
         ...
